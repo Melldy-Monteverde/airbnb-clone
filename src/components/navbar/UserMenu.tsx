@@ -7,6 +7,7 @@ import MenuItem from './MenuItem';
 
 import useRegisterMoodal from '@/hooks/useRegisterModal';
 import useLoginMoodal from '@/hooks/useLoginModal';
+import useRentMoodal from '@/hooks/useRentModal';
 import { signOut } from 'next-auth/react'
 import { SafeUser } from '@/app/types';
 
@@ -19,17 +20,27 @@ const UserMenu: React.FC<UserMenuProps> = ({
 }) => {
   const registerModal = useRegisterMoodal()
   const loginModal = useLoginMoodal()
+  const rentModal = useRentMoodal()
   const [isOpen, setIsOpen] = useState(false)
 
   const toogleOpen = useCallback(() => {
     setIsOpen(value => !value)
   }, [])
 
+  const onRent = useCallback(() => {
+    if (!currentUser) {
+      return loginModal.onOpen()
+    }
+
+    // open rent modal
+    rentModal.onOpen()
+  }, [currentUser, loginModal, rentModal])
+
   return (
     <div className='relative'>
       <div className='flex flex-row items-center gap-3'>
         <div
-          onClick={() => { }}
+          onClick={onRent}
           className='
             hidden
             md:block
@@ -100,7 +111,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
                   label='My properties'
                 />
                 <MenuItem
-                  onClick={() => { }}
+                  onClick={rentModal.onOpen}
                   label='Airbnb my home'
                 />
                 <hr />

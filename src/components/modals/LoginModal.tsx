@@ -2,7 +2,6 @@
 
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import axios from "axios"
 import { AiFillGithub } from "react-icons/ai"
 import { FcGoogle } from 'react-icons/fc'
 import { useCallback, useState } from "react"
@@ -60,6 +59,11 @@ const LoginModal = () => {
       })
   }
 
+  const toogle = useCallback(() => {
+    loginModal.onClose()
+    registerModal.onOpen()
+  }, [loginModal, registerModal])
+
   const bodyContent = (
     <div className="flex flex-col gap-4">
       <Heading
@@ -109,12 +113,12 @@ const LoginModal = () => {
       '>
         <div className='flex flex-row justify-center items-center gap-2'>
           <div>
-            Already have an account?
+            First time using Airbnb?
           </div>
           <div
-            onClick={registerModal.onClose}
+            onClick={toogle}
             className='text-neutral-800 cursor-pointer hover:underline'>
-            Log in
+            Create an account
           </div>
         </div>
       </div>
