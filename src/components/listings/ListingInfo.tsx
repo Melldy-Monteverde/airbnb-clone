@@ -73,6 +73,7 @@ const ListingInfo: React.FC<ListingInfoProps> = ({
         </div>
       </div>
       <hr />
+      {/* FIX: this is not rendering well */}
       {category && (
         <ListingCategory
           icon={category.icon}
