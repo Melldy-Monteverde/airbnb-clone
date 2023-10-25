@@ -1,11 +1,11 @@
 'use client'
 
 import axios from "axios";
-import { Reservation } from "@prisma/client"
-import { SafeListing, SafeUser } from "@/app/types";
+import { SafeListing, SafeReservation, SafeUser } from "@/app/types";
 import { differenceInCalendarDays, differenceInDays, eachDayOfInterval } from "date-fns";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { Range } from "react-date-range";
 import { useRouter } from "next/navigation";
 import useLoginMoodal from "@/hooks/useLoginModal";
 import { categories } from "@/components/navbar/Categories";
@@ -13,7 +13,6 @@ import Container from "@/components/Container";
 import ListingHead from "@/components/listings/ListingHead";
 import ListingInfo from "@/components/listings/ListingInfo";
 import ListingReservation from "@/components/listings/ListingReservation";
-import { Range } from "react-date-range";
 
 const initialDateRange = {
   startDate: new Date(),
@@ -22,7 +21,7 @@ const initialDateRange = {
 }
 
 interface ListingClientProps {
-  reservation?: Reservation[];
+  reservations?: SafeReservation[];
   listing: SafeListing & {
     user: SafeUser
   };
@@ -32,7 +31,7 @@ interface ListingClientProps {
 const ListingClient: React.FC<ListingClientProps> = ({
   listing,
   currentUser,
-  reservation = []
+  reservations = []
 }) => {
   const loginModal = useLoginMoodal()
   const router = useRouter()
@@ -40,7 +39,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
   const disabledDates = useMemo(() => {
     let dates: Date[] = []
 
-    reservation.forEach((reservation) => {
+    reservations.forEach((reservation) => {
       const range = eachDayOfInterval({
         start: new Date(reservation.startDate),
         end: new Date(reservation.endDate)
@@ -50,7 +49,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
     })
 
     return dates
-  }, [reservation])
+  }, [reservations])
 
   const [isLoading, setIsLoading] = useState(false)
   const [totalPrice, setTotalPrice] = useState(listing.price)
@@ -72,8 +71,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
       .then(() => {
         toast.success('Listing reserved!')
         setDateRange(initialDateRange)
-        // TODO: redirect to /trips
-        router.refresh()
+        router.push('/trips')
       })
       .catch(() => {
         toast.error('Something went wrong.')
